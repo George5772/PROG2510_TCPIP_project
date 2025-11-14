@@ -1,0 +1,80 @@
+﻿<Window x:Class="Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <!--
+    FILE : CommunicationsWindow.xaml
+    PROJECT : PROG2510 - A07
+    PROGRAMMER : George Shapka, Key
+    FIRST VERSION : 11/14/2025
+    -->
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Help">
+                <MenuItem Name="menuHelpAbout" Header="_About" Click="menuHelpAbout_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Configure">
+                <MenuItem Name="menuConfigIp" Header="_Ip" Click="menuConfigIp_Click"/>
+                <MenuItem Name="menuConfigPort" Header="_Port" Click="menuConfigPort_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <!--log box-->
+        <Border DockPanel.Dock="Bottom" BorderThickness="2" BorderBrush="Gray">
+            <StackPanel>
+                <Label Content="Log:" FontSize="15"/>
+                <TextBox Height="200" IsReadOnly="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto"/>
+            </StackPanel>
+        </Border>
+        
+        <!--send and receive grid-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <!--send box-->
+            <Border Grid.Column="0" BorderThickness="2" BorderBrush="LightGreen">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Enter Message Here" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="15"/>
+                    <TextBox Name="txtUserInput" Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Visible"/>
+                    <Button Name="btnSendInput" Grid.Column="1" Grid.Row="1" Margin="10" Content="Send" Click="btnSendInput_Click"/>
+                </Grid>
+            </Border>
+            
+            <!--receive box-->
+            <Border Grid.Column="1" BorderThickness="2" BorderBrush="Yellow">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Receive Message Here" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="15"/>
+                    <TextBox Name="txtReceived" IsReadOnly="True" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible"/>
+                    <Button Name="btnClearReceived" Grid.Column="1" Grid.Row="1" Margin="10" Content="Clear" Click="btnClearReceived_Click"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>
