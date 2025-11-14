@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Client
 {
@@ -20,6 +21,23 @@ namespace Client
 
 
     //load default port and ip from config file
+
+
+    //code for updating receive text box, forget event stuff
+
+    //private void SetTextDispatch(Object str)
+    //{
+    //    Dispatcher dispatcher = txtCrossThreadSolution.Dispatcher;
+    //    if (!dispatcher.CheckAccess())                                  // InvokeRequired property is true if child thread
+    //    {
+    //        MyCallback callback = new MyCallback(SetTextDispatch);        // Callback is instance of delegate
+    //        dispatcher.Invoke(callback, new object[] { str });
+    //    }
+    //    else                                                        // Direct access to Control if parent thread
+    //    {
+    //        txtCrossThreadSolution.Text = (String)str;
+    //    }
+    //}
 
 
     /// <summary>
