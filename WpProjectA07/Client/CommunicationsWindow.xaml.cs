@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.ComponentModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,31 +24,19 @@ namespace Client
     //load default port and ip from config file
 
 
-    //code for updating receive text box, forget event stuff
-
-    //private void SetTextDispatch(Object str)
-    //{
-    //    Dispatcher dispatcher = txtCrossThreadSolution.Dispatcher;
-    //    if (!dispatcher.CheckAccess())                                  // InvokeRequired property is true if child thread
-    //    {
-    //        MyCallback callback = new MyCallback(SetTextDispatch);        // Callback is instance of delegate
-    //        dispatcher.Invoke(callback, new object[] { str });
-    //    }
-    //    else                                                        // Direct access to Control if parent thread
-    //    {
-    //        txtCrossThreadSolution.Text = (String)str;
-    //    }
-    //}
 
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class CommunicationsWindow : Window
     {
-        public MainWindow()
+        public delegate void SetReceivedTextDelegate(string str);
+
+        public CommunicationsWindow()
         {
             InitializeComponent();
+            Receiving.MsgUpdated += ReceivedTextEventHandler;
         }
 
         private void btnSendInput_Click(object sender, RoutedEventArgs e)
@@ -94,5 +83,19 @@ namespace Client
         {
             //get port with regex
         }
+
+        /// <summary>
+        /// catches an event that the message has been updated and updated the message
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReceivedTextEventHandler(object? sender, PropertyChangedEventArgs e)
+        {
+            if(Receiving.msg != null && Receiving.msg != string.Empty)
+            {
+                txtReceived.Text += "\n" + Receiving.msg;
+            }
+        }
+
     }
 }
