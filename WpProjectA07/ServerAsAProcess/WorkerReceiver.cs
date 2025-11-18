@@ -14,6 +14,12 @@
     internal class WorkerReceiver
     {
 		public static bool stop = false;
+
+
+
+		/// <summary>
+		/// receives a message from a tcp/ip client, and sends it to another thread
+		/// </summary>
 		public static void ReceiveMessage()
 		{
 			while (!stop)

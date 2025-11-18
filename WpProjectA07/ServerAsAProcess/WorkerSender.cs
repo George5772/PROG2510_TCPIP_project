@@ -1,4 +1,6 @@
-﻿namespace ServerAsAProcess
+﻿using System.Net.Sockets;
+
+namespace ServerAsAProcess
 {
     /*
 	* FILE : WorkerSender.cs
@@ -13,7 +15,10 @@
 	*/
     internal class WorkerSender
     {
-		public static void SendMessage()
+		/// <summary>
+		/// takes the message from the client and sends it to all other clients
+		/// </summary>
+		public static void SendMessage(TcpClient client)
 		{
 			//compare client to client list
 
