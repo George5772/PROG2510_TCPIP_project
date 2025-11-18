@@ -13,6 +13,18 @@
 	*/
     internal class WorkerReceiver
     {
+		public static bool stop = false;
+		public static void ReceiveMessage()
+		{
+			while (!stop)
+			{
+				//connect client
 
+				//add client to list
+
+				//send client to sender thread
+			}
+			return;
+		}
     }//end of WorkerReceiver
 }

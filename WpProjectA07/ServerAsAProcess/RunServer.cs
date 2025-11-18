@@ -22,7 +22,13 @@ namespace ServerAsAProcess
 		/// </summary>
 		public static void ServerStart()
 		{
+			ThreadStart trStart = new ThreadStart(WorkerReceiver.ReceiveMessage);
+			Thread tr = new Thread(trStart);
+			tr.Start();
 
+			//receiver send stop code
+
+			tr.Join();
 		}
     }//end of RunMainProgram
 }
