@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Net;
+using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,16 +35,28 @@ namespace Client
     public partial class CommunicationsWindow : Window
     {
         public delegate void SetReceivedTextDelegate(string str);
+        public static IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+        public static Int32 port = 13000;
 
         public CommunicationsWindow()
         {
             InitializeComponent();
             Receiving.MsgUpdated += ReceivedTextEventHandler;
+            TcpClient clientReceiver = new TcpClient("127.0.0.1", port);
+            ParameterizedThreadStart tReceiverStart = new ParameterizedThreadStart(Receiving.ReceiveMessages);
+            Thread tReceiver = new Thread(tReceiverStart);
+            tReceiver.Start();
         }
 
         private void btnSendInput_Click(object sender, RoutedEventArgs e)
         {
             //send to server
+            Byte[] data = System.Text.Encoding.ASCII.GetBytes(txtUserInput.Text);
+            TcpClient client = new TcpClient("127.0.0.1", port);
+            NetworkStream stream = client.GetStream();
+            stream.Write(data, 0, data.Length);
+            stream.Close();
+            client.Close();
         }
 
         /// <summary>

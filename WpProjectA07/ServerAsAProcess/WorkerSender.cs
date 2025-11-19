@@ -18,16 +18,32 @@ namespace ServerAsAProcess
 		/// <summary>
 		/// takes the message from the client and sends it to all other clients
 		/// </summary>
-		public static void SendMessage(TcpClient client)
+		public static void SendMessage(object? client)
 		{
-			//compare client to client list
-
-			//send message to all clients that do not match
-
-			//remove client from list
-
-			//disconnect from client
-			return;
+            TcpClient? tcpClient = (TcpClient?)client;
+            while (tcpClient != null)
+            {
+                Mutex? mut;
+                byte[] message = System.Text.Encoding.ASCII.GetBytes(WorkerReceiver.GetStringFromNetworkStream(tcpClient));
+                if (!Mutex.TryOpenExisting("A07Mutex", out mut))
+                {
+                    mut = new Mutex(true, "A07Mutex");
+                    mut.ReleaseMutex();
+                }
+                mut.WaitOne();
+                //compare client to client list and send message to other clients
+                foreach (TcpClient c in RunServer.Clients)
+                {
+                    if (!c.Equals(tcpClient))
+                    {
+                        NetworkStream stream = c.GetStream();
+                        stream.Write(message, 0, message.Length);
+                    }
+                }
+                mut.ReleaseMutex();
+                break;
+            }
+            return;
 		}
     }//end of WorkerSender
 }

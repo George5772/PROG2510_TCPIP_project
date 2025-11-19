@@ -10,7 +10,7 @@
     {
         static void Main(string[] args)
         {
-            RunServer.RunServer();
+            RunServer.ServerStart();
         }
     }
 }
