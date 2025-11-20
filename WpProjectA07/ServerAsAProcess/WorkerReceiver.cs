@@ -27,23 +27,25 @@ namespace ServerAsAProcess
         public static void ReceiveMessage()
         {
             TcpListener? server = null;
-            Mutex? mut;
-            if (!Mutex.TryOpenExisting("A07Mutex", out mut))
-            {
-                mut = new Mutex(true, "A07Mutex");
-                mut.ReleaseMutex();
-            }
 
             try
             {
+                //open mutex
+                Mutex? mut;
+                if (!Mutex.TryOpenExisting("A07Mutex", out mut))
+                {
+                    mut = new Mutex(true, "A07Mutex");
+                    mut.ReleaseMutex();
+                }
+
                 //set ip and port
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-                Int32 port = 13000;
+                IPAddress localAddr = IPAddress.Parse("127.0.0.1");//change to config file
+                Int32 port = 13000;//change to config file
 
                 //make tcplistener
                 server = new TcpListener(localAddr, port);
 
-                //define threads
+                //define thread start
                 ParameterizedThreadStart tStart = new ParameterizedThreadStart(WorkerSender.SendMessage);
 
                 //start server
@@ -53,27 +55,30 @@ namespace ServerAsAProcess
                 {
                     //connect to client
                     TcpClient client = server.AcceptTcpClient();
-                    NetworkStream stream = client.GetStream();
-                    StreamReader sr = new StreamReader(stream);
-
                     if (client == null)
                     {
                         continue;
                     }
+                    
+                    //get stream
+                    NetworkStream stream = client.GetStream();
+                    StreamReader sr = new StreamReader(stream);
 
+                    //read the first message from the client to see if it sends or receives messages
                     string? firstMessage = sr.ReadLine();
-
                     if (firstMessage == null)
                     {
                         continue;
                     }
-                    Console.WriteLine(firstMessage);
+                    //Console.WriteLine(firstMessage);
 
                     if (firstMessage.Equals("Receiver"))
                     {
-                        //add receiving client to list
+                        //add a stream writer for the receiving client to the list
                         StreamWriter sw = new StreamWriter(stream);
                         sw.AutoFlush = true;
+
+                        //get access to the list
                         mut.WaitOne();
                         RunServer.ClientWriters.Add(sw);
                         mut.ReleaseMutex();
@@ -83,20 +88,39 @@ namespace ServerAsAProcess
                         //send client to sender thread
                         Thread t = new Thread(tStart);
                         t.Start(sr);
+
+                        //add thread to the sender list
                         RunServer.Threads.Add(t);
                     }
-                }
+                    else if(firstMessage.Equals("Stop"))
+                    {
+                        //signals the threads to leave
+                        WorkerSender.StopLoop = true;
 
+                        //close stream
+                        sr.Close();
+                        break;
+                    }
+                }//end of while loop
+
+                //join sender threads
                 foreach (Thread t in RunServer.Threads)
                 {
                     t.Join();
                 }
-            }
+
+                //close client receiver writers
+                foreach(StreamWriter sw in RunServer.ClientWriters)
+                {
+                    sw.Close();
+                }
+            }//end of try
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
             return;
-        }
+        }//end of method
+
     }//end of WorkerReceiver
 }

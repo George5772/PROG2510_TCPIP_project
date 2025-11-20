@@ -17,14 +17,18 @@ namespace ServerAsAProcess
 	*/
     internal class RunServer
     {
+		//contains stream writers for clients
 		public static List<StreamWriter> ClientWriters = new List<StreamWriter>();
+
+		//contains threads for sender threads from the clients
 		public static List<Thread> Threads = new List<Thread>();
 
 		/// <summary>
-		/// holds main server loop
+		/// starts the server
 		/// </summary>
 		public static void ServerStart()
 		{
+			//start receiver thread
 			ThreadStart trStart = new ThreadStart(WorkerReceiver.ReceiveMessage);
 			Thread tr = new Thread(trStart);
 			tr.Start();
@@ -33,5 +37,6 @@ namespace ServerAsAProcess
 
 			tr.Join();
 		}
+
     }//end of RunServer
 }
