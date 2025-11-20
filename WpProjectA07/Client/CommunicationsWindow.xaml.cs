@@ -62,7 +62,6 @@ namespace Client
         private void btnSendInput_Click(object sender, RoutedEventArgs e)
         {
             //send to server
-            //Byte[] data = System.Text.Encoding.ASCII.GetBytes(txtUserInput.Text);
             senderWriter.WriteLine(txtUserInput.Text);
         }
 
@@ -93,7 +92,7 @@ namespace Client
         /// <param name="e"></param>
         private void menuConfigIp_Click(object sender, RoutedEventArgs e)
         {
-            //get ip address with regex
+            //get ip address with regex?
         }
 
         /// <summary>
@@ -103,11 +102,11 @@ namespace Client
         /// <param name="e"></param>
         private void menuConfigPort_Click(object sender, RoutedEventArgs e)
         {
-            //get port with regex
+            //get port with regex?
         }
 
         /// <summary>
-        /// catches an event that the message has been updated and updated the message
+        /// catches an event that the message has been updated and sends the text to the dispatcher function
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -118,6 +117,12 @@ namespace Client
                 SetReceivedText(Receiving.msg);
             }
         }
+
+        /// <summary>
+        /// checks for access to the textbox, dispatches to the owner thread
+        /// and owner thread writes to the textbox
+        /// </summary>
+        /// <param name="str"></param>
         private void SetReceivedText(object str)
         {
             System.Windows.Threading.Dispatcher dispatcher = txtUserInput.Dispatcher;
