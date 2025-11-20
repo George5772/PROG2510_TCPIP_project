@@ -33,8 +33,6 @@ namespace ServerAsAProcess
 			Thread tr = new Thread(trStart);
 			tr.Start();
 
-			//receiver send stop code
-
 			tr.Join();
 		}
 
