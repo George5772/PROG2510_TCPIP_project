@@ -27,7 +27,7 @@
         <Border DockPanel.Dock="Bottom" BorderThickness="2" BorderBrush="Gray">
             <StackPanel>
                 <Label Content="Log:" FontSize="15"/>
-                <TextBox Height="200" IsReadOnly="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto"/>
+                <TextBox Name="txtLogBox" Height="200" IsReadOnly="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto"/>
             </StackPanel>
         </Border>
         

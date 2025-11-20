@@ -20,6 +20,7 @@ namespace Client
     {
         public static event PropertyChangedEventHandler? MsgUpdated;
 		public static string? msg;
+		public static volatile bool exception = false;
 
         public static void ReceiveMessages(object? client)
 		{
@@ -61,7 +62,8 @@ namespace Client
             }
 			catch(Exception ex)
 			{
-
+				exception = true;
+				msg = ex.Message;
 			}
 		}
     }//end of Receiving

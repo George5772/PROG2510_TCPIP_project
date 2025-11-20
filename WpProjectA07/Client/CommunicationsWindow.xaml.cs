@@ -63,6 +63,7 @@ namespace Client
         {
             //send to server
             senderWriter.WriteLine(txtUserInput.Text);
+            txtLogBox.Text += "Sent message to server\n";
         }
 
         /// <summary>
@@ -133,9 +134,15 @@ namespace Client
             }
             else
             {
-                if ((string)str != null && (string)str != string.Empty)
+                if(Receiving.exception == true)
+                {
+                    txtLogBox.Text += "ERROR: " + (string)str + "\n";
+                    Receiving.exception = false;
+                }
+                else if ((string)str != null && (string)str != string.Empty)
                 {
                     txtReceived.Text += (string)str + "\n";
+                    txtLogBox.Text += "Message received from server\n";
                 }
             }
         }
