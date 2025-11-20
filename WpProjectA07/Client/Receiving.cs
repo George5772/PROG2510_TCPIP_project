@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
@@ -30,17 +31,33 @@ namespace Client
 					return;
 				}
 				NetworkStream? stream = tcpClient.GetStream();
+				StreamReader streamReader = new StreamReader(stream, System.Text.Encoding.ASCII);
+				StreamWriter streamWriter = new StreamWriter(stream, System.Text.Encoding.ASCII);
+				streamWriter.AutoFlush = true;
 
-                string? data = "";
-                Byte[] bytes = new Byte[256];
-                int i;
+				//tell server this is a receiver
+				streamWriter.WriteLine("Receiver");
 
-                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                {
-                    data = data + System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                }
+				while (true)
+				{
+					string? receivedMsg = streamReader.ReadLine();
+					if (receivedMsg == null)
+					{
+						break;
+					}
+					msg = receivedMsg;
+					MsgUpdated?.Invoke(null, new PropertyChangedEventArgs(nameof(msg)));
+				}
 
-				msg = data;
+                //string? data = "";
+                //Byte[] bytes = new Byte[256];
+                //int i;
+
+                //while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                //{
+                //    data = data + System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                //}
+				//msg = data;
             }
 			catch(Exception ex)
 			{

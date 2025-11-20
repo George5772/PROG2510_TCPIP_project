@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -34,29 +35,35 @@ namespace Client
     /// </summary>
     public partial class CommunicationsWindow : Window
     {
-        public delegate void SetReceivedTextDelegate(string str);
+        public delegate void SetTextCallback(object obj);
         public static IPAddress localAddr = IPAddress.Parse("127.0.0.1");
         public static Int32 port = 13000;
+        private TcpClient senderClient;
+        private TcpClient receiverClient;
+        private StreamWriter senderWriter;
 
         public CommunicationsWindow()
         {
             InitializeComponent();
             Receiving.MsgUpdated += ReceivedTextEventHandler;
-            TcpClient clientReceiver = new TcpClient("127.0.0.1", port);
+
+            receiverClient = new TcpClient("127.0.0.1", port);
             ParameterizedThreadStart tReceiverStart = new ParameterizedThreadStart(Receiving.ReceiveMessages);
             Thread tReceiver = new Thread(tReceiverStart);
-            tReceiver.Start();
+            tReceiver.Start(receiverClient);
+
+            senderClient = new TcpClient("127.0.0.1", port);
+            NetworkStream senderStream = senderClient.GetStream();
+            senderWriter = new StreamWriter(senderStream, System.Text.Encoding.ASCII);
+            senderWriter.AutoFlush = true;
+            senderWriter.WriteLine("Sender");
         }
 
         private void btnSendInput_Click(object sender, RoutedEventArgs e)
         {
             //send to server
-            Byte[] data = System.Text.Encoding.ASCII.GetBytes(txtUserInput.Text);
-            TcpClient client = new TcpClient("127.0.0.1", port);
-            NetworkStream stream = client.GetStream();
-            stream.Write(data, 0, data.Length);
-            stream.Close();
-            client.Close();
+            //Byte[] data = System.Text.Encoding.ASCII.GetBytes(txtUserInput.Text);
+            senderWriter.WriteLine(txtUserInput.Text);
         }
 
         /// <summary>
@@ -106,11 +113,26 @@ namespace Client
         /// <param name="e"></param>
         private void ReceivedTextEventHandler(object? sender, PropertyChangedEventArgs e)
         {
-            if(Receiving.msg != null && Receiving.msg != string.Empty)
+            if(Receiving.msg != null)
             {
-                txtReceived.Text += "\n" + Receiving.msg;
+                SetReceivedText(Receiving.msg);
             }
         }
-
+        private void SetReceivedText(object str)
+        {
+            System.Windows.Threading.Dispatcher dispatcher = txtUserInput.Dispatcher;
+            if (!dispatcher.CheckAccess())
+            {
+                SetTextCallback callback = new SetTextCallback(SetReceivedText);
+                dispatcher.Invoke(callback, new object[] { str });
+            }
+            else
+            {
+                if ((string)str != null && (string)str != string.Empty)
+                {
+                    txtReceived.Text += (string)str + "\n";
+                }
+            }
+        }
     }
 }

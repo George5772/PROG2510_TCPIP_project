@@ -17,7 +17,8 @@ namespace ServerAsAProcess
 	*/
     internal class RunServer
     {
-		public static List<TcpClient> Clients = new List<TcpClient>();
+		public static List<StreamWriter> ClientWriters = new List<StreamWriter>();
+		public static List<Thread> Threads = new List<Thread>();
 
 		/// <summary>
 		/// holds main server loop
@@ -32,5 +33,5 @@ namespace ServerAsAProcess
 
 			tr.Join();
 		}
-    }//end of RunMainProgram
+    }//end of RunServer
 }

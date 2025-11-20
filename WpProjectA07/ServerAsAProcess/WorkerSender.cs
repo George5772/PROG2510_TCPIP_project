@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Net.Http;
+using System.Net.Sockets;
 
 namespace ServerAsAProcess
 {
@@ -15,35 +16,46 @@ namespace ServerAsAProcess
 	*/
     internal class WorkerSender
     {
-		/// <summary>
-		/// takes the message from the client and sends it to all other clients
-		/// </summary>
-		public static void SendMessage(object? client)
-		{
-            TcpClient? tcpClient = (TcpClient?)client;
-            while (tcpClient != null)
+        /// <summary>
+        /// takes the message from the client and sends it to all other clients
+        /// </summary>
+        public static void SendMessage(object? client)
+        {
+            StreamReader? sr = (StreamReader?)client;
+            if (sr != null)
             {
-                Mutex? mut;
-                byte[] message = System.Text.Encoding.ASCII.GetBytes(WorkerReceiver.GetStringFromNetworkStream(tcpClient));
-                if (!Mutex.TryOpenExisting("A07Mutex", out mut))
+                while(true)
                 {
-                    mut = new Mutex(true, "A07Mutex");
+                    Mutex? mut;
+                    string? message = sr.ReadLine();
+
+                    if (message == null)
+                    {
+                        message = "ERROR";
+                    }
+
+                    Console.WriteLine(message);
+
+                    if (!Mutex.TryOpenExisting("A07Mutex", out mut))
+                    {
+                        mut = new Mutex(true, "A07Mutex");
+                        mut.ReleaseMutex();
+                    }
+                    mut.WaitOne();
+
+                    //compare client to client list and send message to other clients
+                    foreach (StreamWriter sw in RunServer.ClientWriters)
+                    {
+                        sw.WriteLine(message);
+                        //stream.Write(message, 0, message.Length);
+                    }
+
                     mut.ReleaseMutex();
                 }
-                mut.WaitOne();
-                //compare client to client list and send message to other clients
-                foreach (TcpClient c in RunServer.Clients)
-                {
-                    if (!c.Equals(tcpClient))
-                    {
-                        NetworkStream stream = c.GetStream();
-                        stream.Write(message, 0, message.Length);
-                    }
-                }
-                mut.ReleaseMutex();
-                break;
+                
             }
+
             return;
-		}
+        }
     }//end of WorkerSender
 }
