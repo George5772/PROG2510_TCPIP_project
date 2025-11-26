@@ -17,10 +17,6 @@
             <MenuItem Header="_Help">
                 <MenuItem Name="menuHelpAbout" Header="_About" Click="menuHelpAbout_Click"/>
             </MenuItem>
-            <MenuItem Header="_Configure">
-                <MenuItem Name="menuConfigIp" Header="_Ip" Click="menuConfigIp_Click"/>
-                <MenuItem Name="menuConfigPort" Header="_Port" Click="menuConfigPort_Click"/>
-            </MenuItem>
         </Menu>
 
         <!--log box-->
@@ -60,11 +56,27 @@
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
                         <Button Name="btnConnectToServer" 
                                 Grid.Column="1" 
                                 Margin="10" 
                                 Content="CONNECT" 
                                 Click="btnConnectToServer_Click"/>
+
+                    </Grid>
+                    <Grid Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Name" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" Margin="0"/>
+                        <Button Grid.Column="1" Grid.Row="0"></Button>
+
                     </Grid>
                 </Grid>
             </Border>

@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace MessageServerAsService
 {
@@ -44,9 +45,11 @@ namespace MessageServerAsService
                     clientMut.ReleaseMutex();
                 }
 
+                string ipAddress = ConfigurationManager.AppSettings["ipAddress"];
+                string portNumber = ConfigurationManager.AppSettings["portNumber"];
                 //set ip and port
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");//change to config file
-                Int32 port = 13000;//change to config file
+                IPAddress localAddr = Validation.validateIPFormat(ipAddress);
+                Int32 port = Validation.validatePort(portNumber);
 
                 //make tcplistener
                 server = new TcpListener(localAddr, port);
@@ -124,6 +127,7 @@ namespace MessageServerAsService
             catch (Exception ex)
             {
                 Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Error, ex.Message);
+                EventLogger.Log(LoggerActions.Error + ex.Message);
             }
             return;
         }//end of method
@@ -147,6 +151,7 @@ namespace MessageServerAsService
             catch (Exception ex)
             {
                 Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Error, ex.Message);
+                EventLogger.Log(LoggerActions.Error + ex.Message);
             }
             finally
             {

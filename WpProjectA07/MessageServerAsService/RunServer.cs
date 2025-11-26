@@ -7,13 +7,14 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace MessageServerAsService
 {
     /*
 	* FILE : RunServer.cs
 	* PROJECT : PROG2510 - A07
-	* PROGRAMMER : George Shapka
+	* PROGRAMMER : George Shapka, Le Hai Quy Bui
 	* FIRST VERSION : 11/18/2025 12:02:39 PM
 	*/
 
@@ -26,11 +27,13 @@ namespace MessageServerAsService
         //contains tcpClients for receiver clients
         public static ManualResetEvent OkayToContinue = new ManualResetEvent(true);
         public static List<TcpClient> Clients = new List<TcpClient>();
-        public static string LogFilePath = "C:\\logs\tcpProject.log";
+        public static string LogFilePath = ConfigurationManager.AppSettings["loggerFilePath"];
 
-
-        public static IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-        public static Int32 port = 13000;
+        string ipAddress = ConfigurationManager.AppSettings["ipAddress"];
+        string portNumber = ConfigurationManager.AppSettings["portNumber"];
+        public static IPAddress localAddr;
+        public static Int32 port;
+    
 
         //contains threads for sender threads from the clients
         public static List<Thread> Threads = new List<Thread>();

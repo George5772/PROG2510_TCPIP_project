@@ -90,6 +90,7 @@ namespace MessageServerAsService
                 catch (Exception ex)
                 {
                     Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Error, ex.Message);
+                    EventLogger.Log(LoggerActions.Error + ex.Message);
                 }
                 finally
                 {
@@ -115,6 +116,7 @@ namespace MessageServerAsService
             catch (Exception ex)
             {
                 Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Error, ex.Message);
+                EventLogger.Log(LoggerActions.Error + ex.Message);
             }
             return;
         }//end of method
