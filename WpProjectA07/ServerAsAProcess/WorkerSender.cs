@@ -59,7 +59,7 @@ namespace ServerAsAProcess
 				}
 				catch (Exception ex)
                 {
-                    Logger.LogDataToFile(RunServer.Filepath, LoggerActions.Error, ex.Message);
+                    Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Error, ex.Message);
                 }
 				finally
 				{
@@ -84,7 +84,7 @@ namespace ServerAsAProcess
             }
             catch (Exception ex)
             {
-                Logger.LogDataToFile(RunServer.Filepath, LoggerActions.Error, ex.Message);
+                Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Error, ex.Message);
             }
             return;
         }//end of method

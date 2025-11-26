@@ -114,7 +114,7 @@ namespace ServerAsAProcess
 			}//end of try
 			catch (Exception ex)
 			{
-				Logger.LogDataToFile(RunServer.Filepath, LoggerActions.Error, ex.Message);
+				Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Error, ex.Message);
 			}
 			return;
 		}//end of method
@@ -137,7 +137,7 @@ namespace ServerAsAProcess
 			}
 			catch(Exception ex)
 			{
-				Logger.LogDataToFile(RunServer.Filepath, LoggerActions.Error, ex.Message);
+				Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Error, ex.Message);
 			}
 			finally
 			{

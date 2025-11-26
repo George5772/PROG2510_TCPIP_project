@@ -19,7 +19,7 @@ namespace ServerAsAProcess
     {
 		//contains tcpClients for receiver clients
 		public static List<TcpClient> Clients = new List<TcpClient>();
-		public static string Filepath = "C:\\logs\tcpProject.log";
+		public static string LogFilePath = "C:\\logs\tcpProject.log";
 
 
         public static IPAddress localAddr = IPAddress.Parse("127.0.0.1");
