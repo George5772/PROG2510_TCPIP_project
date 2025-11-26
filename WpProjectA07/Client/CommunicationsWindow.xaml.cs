@@ -20,7 +20,7 @@ namespace Client
     /*
 	 * FILE : CommunicationsWindow.xaml.cs
 	 * PROJECT : PROG2510 - A07
-	 * PROGRAMMER : George Shapka, Key
+	 * PROGRAMMER : George Shapka, Le Hai Quy Bui
 	 * FIRST VERSION : 11/14/2025
 	 */
 
@@ -36,8 +36,6 @@ namespace Client
     public partial class CommunicationsWindow : Window
     {
         public delegate void SetTextCallback(object obj);
-        public static IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-        public static Int32 port = 13000;
         private TcpClient? senderClient;
         private TcpClient? receiverClient;
         private StreamWriter? senderWriter;
@@ -46,7 +44,8 @@ namespace Client
         {
             InitializeComponent();
             Receiving.MsgUpdated += ReceivedTextEventHandler;
-
+            ipAddressTxtBox.Text = "127.0.0.1";
+            porTxtBox.Text = "13000";
             //by default the client cannot send without connecting to a server first
             txtUserInput.IsEnabled = false;
             btnSendInput.IsEnabled = false;
@@ -185,12 +184,12 @@ namespace Client
         {
             try
             {
-                receiverClient = new TcpClient("127.0.0.1", port);
+                receiverClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
                 ParameterizedThreadStart tReceiverStart = new ParameterizedThreadStart(Receiving.ReceiveMessages);
                 Thread tReceiver = new Thread(tReceiverStart);
                 tReceiver.Start(receiverClient);
 
-                senderClient = new TcpClient("127.0.0.1", port);
+                senderClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
                 senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
                 senderWriter.AutoFlush = true;
                 senderWriter.WriteLine("Sender");
