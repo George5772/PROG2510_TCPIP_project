@@ -76,11 +76,11 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Content="Name" Grid.Column="0" Grid.Row="0" FontSize="10"  Padding="0"/>
+                        <Label Content="Name:" Grid.Column="0" Grid.Row="0" FontSize="7" Padding="0, 0, 3, 0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         <TextBox x:Name="nameTxtBox" Grid.Row="0" Grid.Column="1"></TextBox>
-                        <Label Content="IP ADDRESS" Grid.Column="0" Grid.Row="1" FontSize="9"  Padding="0"/>
+                        <Label Content="IP ADDRESS:" Grid.Column="0" Grid.Row="1" FontSize="7" Padding="0, 0, 3, 0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         <TextBox x:Name="ipAddressTxtBox" Grid.Row="1" Grid.Column="1"></TextBox>
-                        <Label Content="PORT NUMBER" Grid.Column="0" Grid.Row="2" FontSize="7.5"  Padding="0"/>
+                        <Label Content="PORT NUMBER:" Grid.Column="0" Grid.Row="2" FontSize="7" Padding="0, 0, 3, 0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         <TextBox x:Name="porTxtBox" Grid.Row="2" Grid.Column="1"></TextBox>
 
 

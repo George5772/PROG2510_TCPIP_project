@@ -47,7 +47,7 @@ namespace Client
         {
             InitializeComponent();
             Receiving.MsgUpdated += ReceivedTextEventHandler;
-            ipAddressTxtBox.Text = "127.0.0.1";
+            ipAddressTxtBox.Text = "10.144.97.215";
             porTxtBox.Text = "13000";
             //by default the client cannot send without connecting to a server first
             txtUserInput.IsEnabled = false;

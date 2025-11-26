@@ -40,7 +40,7 @@ namespace ServerAsAProcess
 				}
 
 				//set ip and port
-				IPAddress localAddr = IPAddress.Parse("127.0.0.1");//change to config file
+				IPAddress localAddr = IPAddress.Parse("10.144.98.49");//change to config file
 				Int32 port = 13000;//change to config file
 
 				//make tcplistener
