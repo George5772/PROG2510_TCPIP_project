@@ -67,7 +67,7 @@ namespace Client
             {
                 if(senderWriter != null)
                 {
-                    senderWriter.WriteLine(userId + "|" + txtUserInput.Text);
+                    senderWriter.WriteLine(userId + "|" + nameTxtBox.Text + ": " + txtUserInput.Text);
                     txtLogBox.Text += "Sent message to server\n";
                 }
             }
@@ -154,7 +154,7 @@ namespace Client
                 else if ((string)str != null && (string)str != string.Empty)
                 {
                     string[] messageParts = ((string)str).Split("|");
-                    string name = messageParts[0];
+                    string Id = messageParts[0];
                     string message = messageParts[1];
                     //initiate server stopping
                     if(message.Equals("STOP"))
@@ -170,7 +170,7 @@ namespace Client
                             btnSendInput.IsEnabled = false;
                         }
                     }
-                    else if(name.Equals(userId))
+                    else if(Id.Equals(userId))
                     {
                         //do nothing
                         txtLogBox.Text += "Own message received from server\n";
@@ -178,7 +178,7 @@ namespace Client
                     //write the message
                     else
                     {
-                        txtReceived.Text += name + ": " + message + "\n";
+                        txtReceived.Text += message + "\n";
                         txtLogBox.Text += "Message received from server\n";
                     }
                 }
@@ -193,25 +193,29 @@ namespace Client
         /// <param name="e"></param>
         private void btnConnectToServer_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if(!(ipAddressTxtBox.Text == string.Empty || nameTxtBox.Text == string.Empty || porTxtBox.Text == string.Empty))
             {
-                receiverClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
-                ParameterizedThreadStart tReceiverStart = new ParameterizedThreadStart(Receiving.ReceiveMessages);
-                Thread tReceiver = new Thread(tReceiverStart);
-                tReceiver.Start(receiverClient);
+                try
+                {
+                    receiverClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
+                    ParameterizedThreadStart tReceiverStart = new ParameterizedThreadStart(Receiving.ReceiveMessages);
+                    Thread tReceiver = new Thread(tReceiverStart);
+                    tReceiver.Start(receiverClient);
 
-                senderClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
-                senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
-                senderWriter.AutoFlush = true;
-                senderWriter.WriteLine("Sender");
+                    senderClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
+                    senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
+                    senderWriter.AutoFlush = true;
+                    senderWriter.WriteLine("Sender");
 
-                txtUserInput.IsEnabled = true;
-                btnSendInput.IsEnabled = true;
+                    txtUserInput.IsEnabled = true;
+                    btnSendInput.IsEnabled = true;
+                }
+                catch (Exception ex)
+                {
+                    txtLogBox.AppendText("ERROR: " + ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                txtLogBox.AppendText("ERROR: " + ex.Message);
-            }
+            
         }//end of method
 
         private void txtReceived_TextChanged(object sender, TextChangedEventArgs e)
