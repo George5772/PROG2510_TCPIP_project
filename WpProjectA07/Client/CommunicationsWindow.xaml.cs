@@ -155,5 +155,10 @@ namespace Client
                 }
             }
         }
+
+        private void btnConnectToServer_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

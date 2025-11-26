@@ -34,12 +34,34 @@
         <!--send and receive grid-->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            
-            <!--send box-->
+
+            <!-- connect to server button-->
             <Border Grid.Column="0" BorderThickness="2" BorderBrush="Gray">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0" Content="Connect To Server" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="15"/>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Name="btnConnectToServer" Grid.Column="1" Margin="10" Content="CONNECT" Click="btnConnectToServer_Click"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+                <!--send box-->
+            <Border Grid.Column="1" BorderThickness="2" BorderBrush="Gray">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -58,7 +80,7 @@
             </Border>
             
             <!--receive box-->
-            <Border Grid.Column="1" BorderThickness="2" BorderBrush="Gray">
+            <Border Grid.Column="2" BorderThickness="2" BorderBrush="Gray">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
