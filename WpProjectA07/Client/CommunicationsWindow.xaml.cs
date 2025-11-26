@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -42,6 +43,8 @@ namespace Client
         private TcpClient? receiverClient;
         private StreamWriter? senderWriter;
 
+        public static volatile string userId = new Random(DateTime.Now.Millisecond * DateTime.Now.Second).NextInt64().ToString();
+
         public CommunicationsWindow()
         {
             InitializeComponent();
@@ -65,7 +68,7 @@ namespace Client
             {
                 if(senderWriter != null)
                 {
-                    senderWriter.WriteLine(txtUserInput.Text);
+                    senderWriter.WriteLine(userId + "|" + txtUserInput.Text);
                     txtLogBox.Text += "Sent message to server\n";
                 }
             }
@@ -170,8 +173,11 @@ namespace Client
                 //if the string has content
                 else if ((string)str != null && (string)str != string.Empty)
                 {
+                    string[] messageParts = ((string)str).Split("|");
+                    string name = messageParts[0];
+                    string message = messageParts[1];
                     //initiate server stopping
-                    if(((string)str).Equals("STOP"))
+                    if(message.Equals("STOP"))
                     {
                         if(senderWriter != null)
                         {
@@ -184,10 +190,15 @@ namespace Client
                             btnSendInput.IsEnabled = false;
                         }
                     }
+                    else if(name.Equals(userId))
+                    {
+                        //do nothing
+                        txtLogBox.Text += "Own message received from server\n";
+                    }
                     //write the message
                     else
                     {
-                        txtReceived.Text += (string)str + "\n";
+                        txtReceived.Text += name + ": " + message + "\n";
                         txtLogBox.Text += "Message received from server\n";
                     }
                 }
