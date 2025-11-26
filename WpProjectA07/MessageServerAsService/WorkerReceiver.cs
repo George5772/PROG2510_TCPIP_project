@@ -24,7 +24,7 @@ namespace MessageServerAsService
     internal class WorkerReceiver
     {
         public static volatile bool stop = false;
-
+  
 
 
         /// <summary>
@@ -59,6 +59,8 @@ namespace MessageServerAsService
 
                 while (!stop)
                 {
+                    RunServer.OkayToContinue.WaitOne();
+                    
                     //connect to client
                     TcpClient client = server.AcceptTcpClient();
                     if (client != null)
@@ -67,6 +69,7 @@ namespace MessageServerAsService
                         string firstMessage = getMessageFromClient(client);
 
                         //read the first message from the client to see if it sends or receives messages
+                        
                         if (firstMessage != null)
                         {
                             if (firstMessage.Equals("Receiver"))
@@ -96,6 +99,7 @@ namespace MessageServerAsService
                             }
                         }//end of message != null if
                     }//end of client != null if
+                   
                 }//end of while loop
 
                 foreach (TcpClient client in RunServer.Clients)

@@ -17,6 +17,7 @@ namespace MessageServerAsService
         {
             InitializeComponent();
             runServer = new RunServer();
+            CanPauseAndContinue = true;
         }
 
         protected override void OnStart(string[] args)
@@ -26,7 +27,17 @@ namespace MessageServerAsService
  
         protected override void OnStop()
         {
-            RunServer.sendStop();
+            runServer.ServerContinue();
+            runServer.ServerStop();
+        }
+        protected override void OnContinue()
+        {
+            runServer.ServerContinue();
+        }
+        protected override void OnPause()
+        {
+            runServer.ServerPause();
+           
         }
     }
 }

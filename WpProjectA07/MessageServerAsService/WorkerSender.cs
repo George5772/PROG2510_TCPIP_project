@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,13 +31,21 @@ namespace MessageServerAsService
         {
             //cast parameter
             TcpClient client = (TcpClient)clientObj;
+            
 
             if (client != null)
             {
                 try
                 {
+                    NetworkStream stream = client.GetStream();
                     while (!StopLoop)
                     {
+                        RunServer.OkayToContinue.WaitOne();
+                        if (!stream.DataAvailable)
+                        {
+                            Thread.Sleep(50); 
+                            continue;         
+                        }
                         string message = WorkerReceiver.getMessageFromClient(client);
                         Console.WriteLine(message);
                         if (message != null)
@@ -52,13 +61,29 @@ namespace MessageServerAsService
                             //get mutex to access list
                             mut.WaitOne();
 
-                            //send message to all receiver clients
+                            List<TcpClient> disconnectedClients = new List<TcpClient>();
+
                             foreach (TcpClient clientReceiver in RunServer.Clients)
                             {
-                                sendMessageToClient(clientReceiver, message);
+                                if (clientReceiver.Connected)
+                                {
+                                    sendMessageToClient(clientReceiver, message);
+                                }
+                                else
+                                {
+                                    disconnectedClients.Add(clientReceiver);
+                                }
                             }
 
+                            // Cleanup disconnected clients if any
+                            foreach (var dc in disconnectedClients) RunServer.Clients.Remove(dc);
+
                             mut.ReleaseMutex();
+
+                        }
+                        else
+                        {
+                            break; // Exit loop if client disconnects
                         }
                     }//end of while
                 }

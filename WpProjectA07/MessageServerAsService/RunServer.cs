@@ -24,6 +24,7 @@ namespace MessageServerAsService
     internal class RunServer
     {
         //contains tcpClients for receiver clients
+        public static ManualResetEvent OkayToContinue = new ManualResetEvent(true);
         public static List<TcpClient> Clients = new List<TcpClient>();
         public static string LogFilePath = "C:\\logs\tcpProject.log";
 
@@ -55,7 +56,14 @@ namespace MessageServerAsService
             WorkerReceiver.stop = true;
             tr.Join();
         }
- 
+        public void ServerPause()
+        {
+            OkayToContinue.Reset();
+        }
+        public void ServerContinue()
+        {
+            OkayToContinue.Set();
+        }
         public static void sendStop()
         {
             TcpClient senderClient = new TcpClient(localAddr.ToString(), port);
