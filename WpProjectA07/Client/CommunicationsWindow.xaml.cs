@@ -46,24 +46,37 @@ namespace Client
         {
             InitializeComponent();
             Receiving.MsgUpdated += ReceivedTextEventHandler;
+
+            //by default the client cannot send without connecting to a server first
             txtUserInput.IsEnabled = false;
             btnSendInput.IsEnabled = false;
         }
 
+
+
+        /// <summary>
+        /// sends a message to the server. if it cannot for any reason, close all connections
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnSendInput_Click(object sender, RoutedEventArgs e)
         {
-            //send to server
             try
             {
-                senderWriter.WriteLine(txtUserInput.Text);
-                txtLogBox.Text += "Sent message to server\n";
+                if(senderWriter != null)
+                {
+                    senderWriter.WriteLine(txtUserInput.Text);
+                    txtLogBox.Text += "Sent message to server\n";
+                }
             }
             catch (Exception ex)
             {
                 txtLogBox.AppendText("ERROR: " + ex.Message);
                 txtUserInput.IsEnabled = false;
                 btnSendInput.IsEnabled = false;
-                if(senderClient != null)
+
+                //close all connections
+                if (senderClient != null)
                 {
                     senderClient.Close();
                 }
@@ -139,27 +152,39 @@ namespace Client
         private void SetReceivedText(object str)
         {
             System.Windows.Threading.Dispatcher dispatcher = txtUserInput.Dispatcher;
+            //check if owner thread
             if (!dispatcher.CheckAccess())
             {
+                //send to owner
                 SetTextCallback callback = new SetTextCallback(SetReceivedText);
                 dispatcher.Invoke(callback, new object[] { str });
             }
             else
             {
+                //if an exception occured
                 if(Receiving.exception == true)
                 {
                     txtLogBox.Text += "ERROR: " + (string)str + "\n";
                     Receiving.exception = false;
                 }
+                //if the string has content
                 else if ((string)str != null && (string)str != string.Empty)
                 {
+                    //initiate server stopping
                     if(((string)str).Equals("STOP"))
                     {
-                        senderWriter.WriteLine(txtUserInput.Text);
-                        txtLogBox.Text += "Server Shutting Down\n";
-                        txtUserInput.IsEnabled = false;
-                        btnSendInput.IsEnabled = false;
+                        if(senderWriter != null)
+                        {
+                            //unblock the server
+                            senderWriter.WriteLine("Server Shutdown");
+                            txtLogBox.Text += "Server Shutting Down\n";
+
+                            //disable user sending stuff
+                            txtUserInput.IsEnabled = false;
+                            btnSendInput.IsEnabled = false;
+                        }
                     }
+                    //write the message
                     else
                     {
                         txtReceived.Text += (string)str + "\n";
