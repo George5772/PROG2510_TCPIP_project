@@ -27,7 +27,12 @@
         <Border DockPanel.Dock="Bottom" BorderThickness="2" BorderBrush="Gray">
             <StackPanel>
                 <Label Content="Log:" FontSize="15"/>
-                <TextBox Name="txtLogBox" Height="200" IsReadOnly="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto"/>
+                <TextBox Name="txtLogBox" 
+                         Height="200" 
+                         IsReadOnly="True" 
+                         VerticalScrollBarVisibility="Visible" 
+                         HorizontalScrollBarVisibility="Auto" 
+                         TextChanged="txtLogBox_TextChanged"/>
             </StackPanel>
         </Border>
         
@@ -55,7 +60,11 @@
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Button Name="btnConnectToServer" Grid.Column="1" Margin="10" Content="CONNECT" Click="btnConnectToServer_Click"/>
+                        <Button Name="btnConnectToServer" 
+                                Grid.Column="1" 
+                                Margin="10" 
+                                Content="CONNECT" 
+                                Click="btnConnectToServer_Click"/>
                     </Grid>
                 </Grid>
             </Border>
@@ -74,8 +83,16 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Content="Enter Message Here" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="15"/>
-                    <TextBox Name="txtUserInput" Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Visible"/>
-                    <Button Name="btnSendInput" Grid.Column="1" Grid.Row="1" Margin="10" Content="Send" Click="btnSendInput_Click"/>
+                    <TextBox Name="txtUserInput" 
+                             Grid.Row="1" 
+                             Grid.Column="0" 
+                             VerticalScrollBarVisibility="Visible"/>
+                    <Button Name="btnSendInput" 
+                            Grid.Column="1" 
+                            Grid.Row="1" 
+                            Margin="10" 
+                            Content="Send" 
+                            Click="btnSendInput_Click"/>
                 </Grid>
             </Border>
             
@@ -93,8 +110,19 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Content="Receive Message Here" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="15"/>
-                    <TextBox Name="txtReceived" IsReadOnly="True" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible"/>
-                    <Button Name="btnClearReceived" Grid.Column="1" Grid.Row="1" Margin="10" Content="Clear" Click="btnClearReceived_Click"/>
+                    <TextBox Name="txtReceived" 
+                             IsReadOnly="True" 
+                             Grid.Row="1" 
+                             Grid.Column="0" 
+                             TextWrapping="Wrap" 
+                             VerticalScrollBarVisibility="Visible" 
+                             TextChanged="txtReceived_TextChanged"/>
+                    <Button Name="btnClearReceived" 
+                            Grid.Column="1" 
+                            Grid.Row="1" 
+                            Margin="10" 
+                            Content="Clear" 
+                            Click="btnClearReceived_Click"/>
                 </Grid>
             </Border>
         </Grid>

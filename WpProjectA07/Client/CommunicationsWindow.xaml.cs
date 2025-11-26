@@ -38,31 +38,44 @@ namespace Client
         public delegate void SetTextCallback(object obj);
         public static IPAddress localAddr = IPAddress.Parse("127.0.0.1");
         public static Int32 port = 13000;
-        private TcpClient senderClient;
-        private TcpClient receiverClient;
-        private StreamWriter senderWriter;
+        private TcpClient? senderClient;
+        private TcpClient? receiverClient;
+        private StreamWriter? senderWriter;
 
         public CommunicationsWindow()
         {
             InitializeComponent();
             Receiving.MsgUpdated += ReceivedTextEventHandler;
-
-            receiverClient = new TcpClient("127.0.0.1", port);
-            ParameterizedThreadStart tReceiverStart = new ParameterizedThreadStart(Receiving.ReceiveMessages);
-            Thread tReceiver = new Thread(tReceiverStart);
-            tReceiver.Start(receiverClient);
-
-            senderClient = new TcpClient("127.0.0.1", port);
-            senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
-            senderWriter.AutoFlush = true;
-            senderWriter.WriteLine("Sender");
+            txtUserInput.IsEnabled = false;
+            btnSendInput.IsEnabled = false;
         }
 
         private void btnSendInput_Click(object sender, RoutedEventArgs e)
         {
             //send to server
-            senderWriter.WriteLine(txtUserInput.Text);
-            txtLogBox.Text += "Sent message to server\n";
+            try
+            {
+                senderWriter.WriteLine(txtUserInput.Text);
+                txtLogBox.Text += "Sent message to server\n";
+            }
+            catch (Exception ex)
+            {
+                txtLogBox.AppendText("ERROR: " + ex.Message);
+                txtUserInput.IsEnabled = false;
+                btnSendInput.IsEnabled = false;
+                if(senderClient != null)
+                {
+                    senderClient.Close();
+                }
+                if(receiverClient != null)
+                {
+                    receiverClient.Close();
+                }
+                if(senderWriter != null)
+                {
+                    senderWriter.Close();
+                }
+            }
         }
 
         /// <summary>
@@ -156,9 +169,43 @@ namespace Client
             }
         }
 
+
+        /// <summary>
+        /// trys to connect to the server
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnConnectToServer_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                receiverClient = new TcpClient("127.0.0.1", port);
+                ParameterizedThreadStart tReceiverStart = new ParameterizedThreadStart(Receiving.ReceiveMessages);
+                Thread tReceiver = new Thread(tReceiverStart);
+                tReceiver.Start(receiverClient);
 
+                senderClient = new TcpClient("127.0.0.1", port);
+                senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
+                senderWriter.AutoFlush = true;
+                senderWriter.WriteLine("Sender");
+
+                txtUserInput.IsEnabled = true;
+                btnSendInput.IsEnabled = true;
+            }
+            catch (Exception ex)
+            {
+                txtLogBox.AppendText("ERROR: " + ex.Message);
+            }
+        }//end of method
+
+        private void txtReceived_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            txtReceived.ScrollToEnd();
+        }
+
+        private void txtLogBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            txtLogBox.ScrollToEnd();
         }
     }
 }
