@@ -53,8 +53,7 @@ namespace Client
             tReceiver.Start(receiverClient);
 
             senderClient = new TcpClient("127.0.0.1", port);
-            NetworkStream senderStream = senderClient.GetStream();
-            senderWriter = new StreamWriter(senderStream, System.Text.Encoding.ASCII);
+            senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
             senderWriter.AutoFlush = true;
             senderWriter.WriteLine("Sender");
         }
@@ -141,8 +140,18 @@ namespace Client
                 }
                 else if ((string)str != null && (string)str != string.Empty)
                 {
-                    txtReceived.Text += (string)str + "\n";
-                    txtLogBox.Text += "Message received from server\n";
+                    if(((string)str).Equals("STOP"))
+                    {
+                        senderWriter.WriteLine(txtUserInput.Text);
+                        txtLogBox.Text += "Server Shutting Down\n";
+                        txtUserInput.IsEnabled = false;
+                        btnSendInput.IsEnabled = false;
+                    }
+                    else
+                    {
+                        txtReceived.Text += (string)str + "\n";
+                        txtLogBox.Text += "Message received from server\n";
+                    }
                 }
             }
         }

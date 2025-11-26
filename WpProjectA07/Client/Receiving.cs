@@ -31,34 +31,24 @@ namespace Client
 				{
 					return;
 				}
-				NetworkStream? stream = tcpClient.GetStream();
-				StreamReader streamReader = new StreamReader(stream, System.Text.Encoding.ASCII);
-				StreamWriter streamWriter = new StreamWriter(stream, System.Text.Encoding.ASCII);
-				streamWriter.AutoFlush = true;
+				NetworkStream networkStream = tcpClient.GetStream();
+				StreamReader sr = new StreamReader(networkStream, System.Text.Encoding.ASCII);
+				StreamWriter sw = new StreamWriter(networkStream, System.Text.Encoding.ASCII);
+				sw.AutoFlush = true;
 
 				//tell server this is a receiver
-				streamWriter.WriteLine("Receiver");
+				sw.WriteLine("Receiver");
 
-				while (true)
+				bool doLoop = true;
+				while (doLoop)
 				{
-					string? receivedMsg = streamReader.ReadLine();
-					if (receivedMsg == null)
-					{
-						break;
-					}
-					msg = receivedMsg;
-					MsgUpdated?.Invoke(null, new PropertyChangedEventArgs(nameof(msg)));
+					string? receivedMsg = sr.ReadLine();
+					if (receivedMsg != null)
+                    {
+                        msg = receivedMsg;
+                        MsgUpdated?.Invoke(null, new PropertyChangedEventArgs(nameof(msg)));
+                    }
 				}
-
-                //string? data = "";
-                //Byte[] bytes = new Byte[256];
-                //int i;
-
-                //while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                //{
-                //    data = data + System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                //}
-				//msg = data;
             }
 			catch(Exception ex)
 			{

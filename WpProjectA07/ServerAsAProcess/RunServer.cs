@@ -17,11 +17,16 @@ namespace ServerAsAProcess
 	*/
     internal class RunServer
     {
-		//contains stream writers for clients
-		public static List<StreamWriter> ClientWriters = new List<StreamWriter>();
+		//contains tcpClients for receiver clients
+		public static List<TcpClient> Clients = new List<TcpClient>();
+		public static string Filepath = "C:\\logs\tcpProject.log";
 
-		//contains threads for sender threads from the clients
-		public static List<Thread> Threads = new List<Thread>();
+
+        public static IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+        public static Int32 port = 13000;
+
+        //contains threads for sender threads from the clients
+        public static List<Thread> Threads = new List<Thread>();
 
 		/// <summary>
 		/// starts the server
@@ -32,9 +37,22 @@ namespace ServerAsAProcess
 			ThreadStart trStart = new ThreadStart(WorkerReceiver.ReceiveMessage);
 			Thread tr = new Thread(trStart);
 			tr.Start();
+			Console.ReadKey();
+			sendStop();
+			WorkerReceiver.stop = true;
 
-			tr.Join();
+
+            tr.Join();
 		}
+
+		public static void sendStop()
+		{
+            TcpClient senderClient = new TcpClient(localAddr.ToString(), port);
+            StreamWriter senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
+            senderWriter.AutoFlush = true;
+            senderWriter.WriteLine("Stop");
+			senderClient.Close();
+        }
 
     }//end of RunServer
 }

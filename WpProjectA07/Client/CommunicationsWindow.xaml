@@ -39,7 +39,7 @@
             </Grid.ColumnDefinitions>
             
             <!--send box-->
-            <Border Grid.Column="0" BorderThickness="2" BorderBrush="LightGreen">
+            <Border Grid.Column="0" BorderThickness="2" BorderBrush="Gray">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -58,7 +58,7 @@
             </Border>
             
             <!--receive box-->
-            <Border Grid.Column="1" BorderThickness="2" BorderBrush="Yellow">
+            <Border Grid.Column="1" BorderThickness="2" BorderBrush="Gray">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
