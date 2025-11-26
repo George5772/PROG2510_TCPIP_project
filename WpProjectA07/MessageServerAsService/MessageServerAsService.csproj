@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -64,6 +65,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunServer.cs" />
+    <Compile Include="Validation.cs" />
     <Compile Include="WorkerReceiver.cs" />
     <Compile Include="WorkerSender.cs" />
   </ItemGroup>

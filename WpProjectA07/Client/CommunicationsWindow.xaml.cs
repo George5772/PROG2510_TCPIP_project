@@ -114,25 +114,6 @@ namespace Client
             //create about window
         }
 
-        /// <summary>
-        /// allows the user to set the servers ip address
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void menuConfigIp_Click(object sender, RoutedEventArgs e)
-        {
-            //get ip address with regex?
-        }
-
-        /// <summary>
-        /// allows the user to set the server port to connect to
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void menuConfigPort_Click(object sender, RoutedEventArgs e)
-        {
-            //get port with regex?
-        }
 
         /// <summary>
         /// catches an event that the message has been updated and sends the text to the dispatcher function
