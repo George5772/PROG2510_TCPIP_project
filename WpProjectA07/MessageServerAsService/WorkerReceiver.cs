@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Configuration;
+using System.Data;
 
 namespace MessageServerAsService
 {
@@ -51,78 +52,96 @@ namespace MessageServerAsService
                 IPAddress localAddr = Validation.validateIPFormat(ipAddress);
                 Int32 port = Validation.validatePort(portNumber);
 
-                //make tcplistener
-                server = new TcpListener(localAddr, port);
-
-                //define thread start
-                ParameterizedThreadStart tStart = new ParameterizedThreadStart(WorkerSender.SendMessage);
-
-                //start server
-                server.Start();
-
-                while (!stop)
+                if (RunServer.localAddr == null || RunServer.port <= 0)
                 {
-                    RunServer.OkayToContinue.WaitOne();
+                    // log and bail out gracefully
+                    Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Error, "Invalid IP address or port in configuration.");
+                    EventLogger.Log(LoggerActions.Error + "Invalid IP address or port in configuration.");
                     
-                    //connect to client
-                    TcpClient client = server.AcceptTcpClient();
-                    if (client != null)
+                }
+                else
+                {
+                    //make tcplistener
+                    server = new TcpListener(localAddr, port);
+
+                    //define thread start
+                    ParameterizedThreadStart tStart = new ParameterizedThreadStart(WorkerSender.SendMessage);
+
+                    //start server
+                    server.Start();
+
+                    while (!stop)
                     {
-                        //get stream
-                        string firstMessage = getMessageFromClient(client);
+                        RunServer.OkayToContinue.WaitOne();
 
-                        //read the first message from the client to see if it sends or receives messages
-                        
-                        if (firstMessage != null)
+                        //connect to client
+                        TcpClient client = server.AcceptTcpClient();
+                        if (client != null)
                         {
-                            if (firstMessage.Equals("Receiver"))
+                            //get stream
+                            string firstMessage = getMessageFromClient(client);
+
+                            //read the first message from the client to see if it sends or receives messages
+
+                            if (firstMessage != null)
                             {
-                                //add a client to the receiving client list
-                                //get access to the list
-                                clientMut.WaitOne();
-                                RunServer.Clients.Add(client);
-                                clientMut.ReleaseMutex();
-                            }
-                            else if (firstMessage.Equals("Sender"))
-                            {
-                                //send client to sender thread
-                                Thread t = new Thread(tStart);
-                                t.Start(client);
+                                string[] firstParts = firstMessage.Split('|');
+                                string type = firstParts[0];
+                                string userId = string.Empty;
+                                if (firstParts.Length >= 2)
+                                {
+                                    userId = firstParts[1];
+                                }
 
-                                //add thread to the sender list
-                                clientMut.WaitOne();
-                                RunServer.Threads.Add(t);
-                                clientMut.ReleaseMutex();
-                            }
-                            else if (firstMessage.Equals("Stop"))
-                            {
-                                //signals the threads to leave
-                                WorkerSender.StopLoop = true;
-                                stop = true;
-                            }
-                        }//end of message != null if
-                    }//end of client != null if
-                   
-                }//end of while loop
+                                if (type.Equals("Receiver"))
+                                {
+                                    //add a client to the receiving client list
+                                    clientMut.WaitOne();
+                                    RunServer.Clients.Add(client);
+                                    RunServer.ClientUserIds.Add(userId);
+                                    clientMut.ReleaseMutex();
+                                }
+                                else if (type.Equals("Sender"))
+                                {
+                                    //send client to sender thread
+                                    Thread t = new Thread(tStart);
+                                    t.Start(client);
 
-                foreach (TcpClient client in RunServer.Clients)
-                {
-                    WorkerSender.sendMessageToClient(client, "STOP");
+                                    //add thread to the sender list
+                                    clientMut.WaitOne();
+                                    RunServer.Threads.Add(t);
+                                    clientMut.ReleaseMutex();
+                                }
+                                else if (type.Equals("Stop"))
+                                {
+                                    //signals the threads to leave
+                                    WorkerSender.StopLoop = true;
+                                    stop = true;
+                                }
+                            }//end of message != null if
+                        }//end of client != null if
+
+                    }//end of while loop
+
+                    foreach (TcpClient client in RunServer.Clients)
+                    {
+                        WorkerSender.sendMessageToClient(client, "STOP");
+                    }
+
+                    //join sender threads
+                    foreach (Thread t in RunServer.Threads)
+                    {
+                        t.Join();
+                    }
+
+                    clientMut.WaitOne();
+                    //close client receiver writers
+                    foreach (TcpClient client in RunServer.Clients)
+                    {
+                        client.Close();
+                    }
+                    clientMut.ReleaseMutex();
                 }
-
-                //join sender threads
-                foreach (Thread t in RunServer.Threads)
-                {
-                    t.Join();
-                }
-
-                clientMut.WaitOne();
-                //close client receiver writers
-                foreach (TcpClient client in RunServer.Clients)
-                {
-                    client.Close();
-                }
-                clientMut.ReleaseMutex();
             }//end of try
             catch (Exception ex)
             {

@@ -1,0 +1,26 @@
+﻿<Window x:Class="Client.About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client"
+        mc:Ignorable="d"
+        Title="About" Height="300" Width="500" ResizeMode="NoResize" >
+    <Grid>
+
+        <Border VerticalAlignment="Center" HorizontalAlignment="Center" BorderBrush="Blue" BorderThickness="3" Padding="60,50,60,50">
+            <!-- I use this link to learn about how to write multple line (https://learn.microsoft.com/en-us/archive/msdn-technet-forums/51a3ffe4-ec82-404a-9a99-6672f2a6842b) of text in one textblock, i need this because
+        in border it accept 1 child, so i cannot create 3 textblock-->
+            <TextBlock TextAlignment="Center">
+            <Run Text="Final Project - PROG 2510 "/>
+            <LineBreak/>
+            <Run Text="Modified By Le Hai Quy Bui And George Shapka"/>
+            <LineBreak/>
+            <Run Text="Final Project Solution"/>
+            </TextBlock>
+
+        </Border>
+        <Button Name="Exit" Content="Close" HorizontalAlignment="Center" Margin="0,0,0,20" VerticalAlignment="Bottom" Click="ExitButton_Click"/>
+
+    </Grid>
+</Window>

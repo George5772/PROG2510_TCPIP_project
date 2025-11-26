@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.InteropServices.ComTypes;
@@ -57,26 +58,72 @@ namespace MessageServerAsService
                                 mut = new Mutex(true, "A07ClientMutex");
                                 mut.ReleaseMutex();
                             }
+                            string[] parts = message.Split('|');
+                            string type = parts[0];
 
                             //get mutex to access list
                             mut.WaitOne();
 
-                            List<TcpClient> disconnectedClients = new List<TcpClient>();
-
-                            foreach (TcpClient clientReceiver in RunServer.Clients)
+                            // MSG|senderId|text
+                            if (type.Equals("MSG") && parts.Length >= 3)
                             {
-                                if (clientReceiver.Connected)
+                                string senderId = parts[1];
+                                string msgBody = parts[2];
+
+                                // 1. ACK back to sender
+                                string ackToSender =
+                                    "ACK|SERVER|" + senderId + "|" + msgBody;
+                                sendMessageToClient(client, ackToSender);
+
+                                // 2. broadcast to all receivers
+                                int i = 0;
+                                while (i < RunServer.Clients.Count)
                                 {
-                                    sendMessageToClient(clientReceiver, message);
+                                    TcpClient clientReceiver = RunServer.Clients[i];
+
+                                    if (clientReceiver.Connected)
+                                    {
+                                        string messageToReceiver =
+                                            "MSG|" + senderId + "|" + msgBody;
+                                        sendMessageToClient(clientReceiver, messageToReceiver);
+                                    }
+
+                                    i++;
                                 }
-                                else
+                            }
+                            // ACK|receiverId|senderId|text
+                            else if (type.Equals("ACK") && parts.Length >= 4)
+                            {
+                                string receiverId = parts[1];
+                                string senderId = parts[2];
+                                string msgBody = parts[3];
+
+                                string logLine =
+                                    "ACK from " + receiverId +
+                                    " to " + senderId +
+                                    " : " + msgBody;
+                                Logger.LogDataToFile(
+                                    RunServer.LogFilePath,
+                                    LoggerActions.Message,
+                                    logLine);
+
+                                // forward ACK to original sender's receiver
+                                int j = 0;
+                                bool found = false;
+                                while (j < RunServer.ClientUserIds.Count && !found)
                                 {
-                                    disconnectedClients.Add(clientReceiver);
+                                    if (RunServer.ClientUserIds[j] == senderId)
+                                    {
+                                        TcpClient senderReceiver = RunServer.Clients[j];
+                                        string ackForward =
+                                            "ACK|" + receiverId + "|" + senderId + "|" + msgBody;
+                                        sendMessageToClient(senderReceiver, ackForward);
+                                        found = true;
+                                    }
+                                    j++;
                                 }
                             }
 
-                            // Cleanup disconnected clients if any
-                            foreach (var dc in disconnectedClients) RunServer.Clients.Remove(dc);
 
                             mut.ReleaseMutex();
 
@@ -107,11 +154,9 @@ namespace MessageServerAsService
             try
             {
                 NetworkStream stream = client.GetStream();
-                using (StreamWriter sw = new StreamWriter(stream, Encoding.ASCII, 1024, true))
-                {
-                    sw.AutoFlush = true;
-                    sw.WriteLine(message);
-                }
+                StreamWriter sw = new StreamWriter(stream, Encoding.ASCII, 1024, true);
+                sw.AutoFlush = true;
+                sw.WriteLine(message);
             }
             catch (Exception ex)
             {

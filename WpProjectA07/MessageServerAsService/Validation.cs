@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MessageServerAsService
 {
@@ -12,22 +8,25 @@ namespace MessageServerAsService
         public static IPAddress validateIPFormat(string ipAddress)
         {
             IPAddress res;
-            if (!IPAddress.TryParse(ipAddress, out res))
+            bool parsed = IPAddress.TryParse(ipAddress, out res);
+            if (!parsed)
             {
                 res = null;
-                EventLogger.Log("User Provide Invalid Format Of IPAdress\n");
+                EventLogger.Log("User provided invalid format of IP address.");
             }
             return res;
         }
-        public static Int32 validatePort(string portNumber)
+
+        public static int validatePort(string portNumber)
         {
-            Int32 res;
-            if(!Int32.TryParse(portNumber, out res))
+            int result;
+            bool parsed = Int32.TryParse(portNumber, out result);
+            if (!parsed)
             {
-                res = -1;
-                EventLogger.Log("User Provide Invalid Format Of Port Number\n");
+                result = -1;
+                EventLogger.Log("User provided invalid format of port number.");
             }
-            return res;
+            return result;
         }
     }
 }

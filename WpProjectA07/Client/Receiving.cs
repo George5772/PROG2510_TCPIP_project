@@ -36,10 +36,10 @@ namespace Client
 				StreamWriter sw = new StreamWriter(networkStream, System.Text.Encoding.ASCII);
 				sw.AutoFlush = true;
 
-				//tell server this is a receiver
-				sw.WriteLine("Receiver");
+                //tell server this is a receiver
+                sw.WriteLine("Receiver|" + CommunicationsWindow.userId);
 
-				bool doLoop = true;
+                bool doLoop = true;
 				while (doLoop)
 				{
 					string? receivedMsg = sr.ReadLine();

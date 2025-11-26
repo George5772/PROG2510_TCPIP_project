@@ -15,6 +15,7 @@ namespace MessageServerAsService
         RunServer runServer;
         public MessageServerService()
         {
+
             InitializeComponent();
             runServer = new RunServer();
             CanPauseAndContinue = true;
@@ -22,20 +23,28 @@ namespace MessageServerAsService
 
         protected override void OnStart(string[] args)
         {
+            EventLogger.Log(LoggerActions.ServiceStarted + "Service started");
+            Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.ServiceStarted, "Service started");
             runServer.ServerStart();
         }
  
         protected override void OnStop()
         {
-            runServer.ServerContinue();
+            EventLogger.Log(LoggerActions.ServideStopped + "Service stopped");
+            Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.ServideStopped, "Service stopped");
+            runServer.ServerContinue(); 
             runServer.ServerStop();
         }
         protected override void OnContinue()
         {
+            Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.ServiceResumed, "Service resumed.");
+            EventLogger.Log(LoggerActions.ServiceResumed + "Service Resume");
             runServer.ServerContinue();
         }
         protected override void OnPause()
         {
+            Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.ServicePaused, "Service paused");
+            EventLogger.Log(LoggerActions.ServicePaused + "Service paused");
             runServer.ServerPause();
            
         }
