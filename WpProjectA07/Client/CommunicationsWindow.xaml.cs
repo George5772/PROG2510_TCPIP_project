@@ -40,6 +40,7 @@ namespace Client
         private TcpClient? senderClient;
         private TcpClient? receiverClient;
         private StreamWriter? senderWriter;
+        private StreamReader? senderReader;
 
         public static volatile string userId = new Random(DateTime.Now.Millisecond * DateTime.Now.Second).NextInt64().ToString();
 
@@ -70,6 +71,42 @@ namespace Client
                     senderWriter.WriteLine("MSG|" + userId + "|" + txtUserInput.Text + "|" + nameTxtBox.Text);
                     txtLogBox.Text += "Sent message to server\n";
                     txtUserInput.Clear();
+                }
+                if(senderReader != null)
+                {
+                    string? msg = senderReader.ReadLine();
+                    string? ack = null;
+                    if (msg != null)
+                    {
+                        ack = msg.Split("|")[0];
+                    }
+                    if(ack != null)
+                    {
+                        if(ack == "ACK")
+                        {
+                            txtLogBox.AppendText("Acknowledgement received\n");
+                        }
+                    }
+                }
+            }
+            catch(IOException)
+            {
+                txtLogBox.AppendText("Server did not send acknowledgement in time, disconnecting\n");
+                txtUserInput.IsEnabled = false;
+                btnSendInput.IsEnabled = false;
+
+                //close all connections
+                if (senderClient != null)
+                {
+                    senderClient.Close();
+                }
+                if (receiverClient != null)
+                {
+                    receiverClient.Close();
+                }
+                if (senderWriter != null)
+                {
+                    senderWriter.Close();
                 }
             }
             catch (Exception ex)
@@ -244,9 +281,12 @@ namespace Client
                     tReceiver.Start(receiverClient);
 
                     senderClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
+                    senderClient.ReceiveTimeout = 3000;
                     senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
                     senderWriter.AutoFlush = true;
                     senderWriter.WriteLine("Sender");
+
+                    senderReader = new StreamReader(senderClient.GetStream(), System.Text.Encoding.ASCII);
 
                     txtUserInput.IsEnabled = true;
                     btnSendInput.IsEnabled = true;
