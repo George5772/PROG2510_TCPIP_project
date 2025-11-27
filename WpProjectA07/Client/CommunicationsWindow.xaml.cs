@@ -47,7 +47,7 @@ namespace Client
         {
             InitializeComponent();
             Receiving.MsgUpdated += ReceivedTextEventHandler;
-            ipAddressTxtBox.Text = "127.0.0.1";
+            ipAddressTxtBox.Text = "10.144.97.215";
             porTxtBox.Text = "13000";
             //by default the client cannot send without connecting to a server first
             txtUserInput.IsEnabled = false;
@@ -230,25 +230,29 @@ namespace Client
         /// <param name="e"></param>
         private void btnConnectToServer_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if(!(ipAddressTxtBox.Text == string.Empty || nameTxtBox.Text == string.Empty || porTxtBox.Text == string.Empty))
             {
-                receiverClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
-                ParameterizedThreadStart tReceiverStart = new ParameterizedThreadStart(Receiving.ReceiveMessages);
-                Thread tReceiver = new Thread(tReceiverStart);
-                tReceiver.Start(receiverClient);
+                try
+                {
+                    receiverClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
+                    ParameterizedThreadStart tReceiverStart = new ParameterizedThreadStart(Receiving.ReceiveMessages);
+                    Thread tReceiver = new Thread(tReceiverStart);
+                    tReceiver.Start(receiverClient);
 
-                senderClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
-                senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
-                senderWriter.AutoFlush = true;
-                senderWriter.WriteLine("Sender");
+                    senderClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
+                    senderWriter = new StreamWriter(senderClient.GetStream(), System.Text.Encoding.ASCII);
+                    senderWriter.AutoFlush = true;
+                    senderWriter.WriteLine("Sender");
 
-                txtUserInput.IsEnabled = true;
-                btnSendInput.IsEnabled = true;
+                    txtUserInput.IsEnabled = true;
+                    btnSendInput.IsEnabled = true;
+                }
+                catch (Exception ex)
+                {
+                    txtLogBox.AppendText("ERROR: " + ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                txtLogBox.AppendText("ERROR: " + ex.Message);
-            }
+            
         }//end of method
 
         private void txtReceived_TextChanged(object sender, TextChangedEventArgs e)
