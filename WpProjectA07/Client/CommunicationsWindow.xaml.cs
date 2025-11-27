@@ -47,7 +47,7 @@ namespace Client
         {
             InitializeComponent();
             Receiving.MsgUpdated += ReceivedTextEventHandler;
-            ipAddressTxtBox.Text = "10.144.97.215";
+            ipAddressTxtBox.Text = "127.0.0.1";
             porTxtBox.Text = "13000";
             //by default the client cannot send without connecting to a server first
             txtUserInput.IsEnabled = false;
@@ -67,7 +67,7 @@ namespace Client
             {
                 if(senderWriter != null)
                 {
-                    senderWriter.WriteLine("MSG|" + userId + "|" + txtUserInput.Text);
+                    senderWriter.WriteLine("MSG|" + userId + "|" + txtUserInput.Text + "|" + nameTxtBox.Text);
                     txtLogBox.Text += "Sent message to server\n";
                     txtUserInput.Clear();
                 }
@@ -178,11 +178,13 @@ namespace Client
                         if (messageParts.Length >= 3)
                         {
                             // from server: MSG|senderName|msgBody
-                            string senderName = messageParts[1];
+                            string senderId = messageParts[1];
+                            string senderName = messageParts[3];
                             string msgBody = messageParts[2];
 
-                            if (senderName.Equals(userId))
+                            if (senderId.Equals(userId))
                             {
+                                txtReceived.Text += "\t" + senderName + ": " + msgBody + "\n";
                                 txtLogBox.Text += "Own message received from server\n";
                             }
                             else
@@ -204,19 +206,21 @@ namespace Client
                     {
                         txtLogBox.Text += "ACK received\n";
                     }
-                    else if (messageType.Equals(userId))
-                    {
-                        //do nothing
-                        txtLogBox.Text += "Own message received from server\n";
-                    }
+                    //else if (messageType.Equals(userId))
+                    //{
+                    //    //do nothing
+                    //    string message = messageParts[1];
+                    //    txtReceived.Text += "\tYour Message: " + message + "\n";
+                    //    txtLogBox.Text += "Own message received from server\n";
+                    //}
                     //write the message (fallback old format)
-                    else if (messageParts.Length >= 2)
-                    {
-                        string name = messageParts[0];
-                        string message = messageParts[1];
-                        txtReceived.Text += name + ": " + message + "\n";
-                        txtLogBox.Text += "Message received from server\n";
-                    }
+                    //else if (messageParts.Length >= 2)
+                    //{
+                    //    string name = messageParts[0];
+                    //    string message = messageParts[1];
+                    //    txtReceived.Text += name + ": " + message + "\n";
+                    //    txtLogBox.Text += "Message received from server\n";
+                    //}
                 }
             }
         }

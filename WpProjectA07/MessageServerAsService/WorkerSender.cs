@@ -69,6 +69,7 @@ namespace MessageServerAsService
                             {
                                 string senderId = parts[1];
                                 string msgBody = parts[2];
+                                string senderName = parts[3];
 
                                 // 1. ACK back to sender
                                 string ackToSender =
@@ -84,7 +85,7 @@ namespace MessageServerAsService
                                     if (clientReceiver.Connected)
                                     {
                                         string messageToReceiver =
-                                            "MSG|" + senderId + "|" + msgBody;
+                                            "MSG|" + senderId + "|" + msgBody + "|" + senderName;
                                         sendMessageToClient(clientReceiver, messageToReceiver);
                                     }
 
