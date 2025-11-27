@@ -16,12 +16,12 @@ namespace MessageServerAsService
         public static void Log(string message)
         {
             EventLog serviceEventLog = new EventLog();
-            if (!EventLog.SourceExists("MessageServerService"))
+            if (!EventLog.SourceExists("MyEventSource"))
             {
-                EventLog.CreateEventSource("MessageServerService", "MessageServerEventLog");
+                EventLog.CreateEventSource("MyEventSource", "MyEventLog");
             }
-            serviceEventLog.Source = "MessageServerService";
-            serviceEventLog.Log = "MessageServerEventLog";
+            serviceEventLog.Source = "MyEventSource";
+            serviceEventLog.Log = "MyEventLog";
             serviceEventLog.WriteEntry(message);
             return;
         }

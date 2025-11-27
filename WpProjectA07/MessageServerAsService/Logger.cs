@@ -25,22 +25,34 @@ namespace MessageServerAsService
         {
             FileStream file;
             StreamWriter sw;
+
             try
             {
-                using (file = new FileStream(filePath, FileMode.Append))
+                string directory = Path.GetDirectoryName(filePath);
+
+                // Ensure directory exists
+                if (directory != null && directory != string.Empty && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                using (file = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
                 {
                     using (sw = new StreamWriter(file))
                     {
                         sw.WriteLine("[" + action + "][" + message + $"][{DateTime.Now.ToString()}]");
                     }
                 }
-            }//end of try
+            }
             catch
             {
+                // ignored on purpose to avoid service crash
+            }
 
-            }//end of catch
+            return;
+        }
 
-        }//end of LogDataToFile
+    }//end of LogDataToFile
 
-    }//end of Logger
-}
+}//end of Logger
+

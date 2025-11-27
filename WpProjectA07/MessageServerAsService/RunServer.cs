@@ -27,12 +27,14 @@ namespace MessageServerAsService
         //contains tcpClients for receiver clients
         public static ManualResetEvent OkayToContinue = new ManualResetEvent(true);
         public static List<TcpClient> Clients = new List<TcpClient>();
+        public static List<string> ClientUserIds = new List<string>();
         public static string LogFilePath = ConfigurationManager.AppSettings["loggerFilePath"];
 
-        string ipAddress = ConfigurationManager.AppSettings["ipAddress"];
-        string portNumber = ConfigurationManager.AppSettings["portNumber"];
-        public static IPAddress localAddr;
-        public static Int32 port;
+        static string ipAddress = ConfigurationManager.AppSettings["ipAddress"];
+        static string portNumber = ConfigurationManager.AppSettings["portNumber"];
+
+        public static IPAddress localAddr = Validation.validateIPFormat(ipAddress);
+        public static Int32 port = Validation.validatePort(portNumber);
     
 
         //contains threads for sender threads from the clients
@@ -57,7 +59,11 @@ namespace MessageServerAsService
         {
             sendStop();
             WorkerReceiver.stop = true;
-            tr.Join();
+            WorkerSender.StopLoop = true;
+            if (tr != null)
+            {
+                tr.Join();
+            }
         }
         public void ServerPause()
         {

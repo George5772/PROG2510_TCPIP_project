@@ -67,8 +67,9 @@ namespace Client
             {
                 if(senderWriter != null)
                 {
-                    senderWriter.WriteLine(userId + "|" + nameTxtBox.Text + ": " + txtUserInput.Text);
+                    senderWriter.WriteLine("MSG|" + userId + "|" + txtUserInput.Text);
                     txtLogBox.Text += "Sent message to server\n";
+                    txtUserInput.Clear();
                 }
             }
             catch (Exception ex)
@@ -110,7 +111,8 @@ namespace Client
         /// <param name="e"></param>
         private void menuHelpAbout_Click(object sender, RoutedEventArgs e)
         {
-            //create about window
+            About about = new About();
+            about.ShowDialog();
         }
 
 
@@ -145,7 +147,7 @@ namespace Client
             else
             {
                 //if an exception occured
-                if(Receiving.exception == true)
+                if (Receiving.exception == true)
                 {
                     txtLogBox.Text += "ERROR: " + (string)str + "\n";
                     Receiving.exception = false;
@@ -154,12 +156,13 @@ namespace Client
                 else if ((string)str != null && (string)str != string.Empty)
                 {
                     string[] messageParts = ((string)str).Split("|");
-                    string Id = messageParts[0];
-                    string message = messageParts[1];
+
+                    string messageType = messageParts[0];
+
                     //initiate server stopping
-                    if(message.Equals("STOP"))
+                    if (messageType.Equals("STOP"))
                     {
-                        if(senderWriter != null)
+                        if (senderWriter != null)
                         {
                             //unblock the server
                             senderWriter.WriteLine("Server Shutdown");
@@ -170,20 +173,54 @@ namespace Client
                             btnSendInput.IsEnabled = false;
                         }
                     }
-                    else if(Id.Equals(userId))
+                    else if (messageType.Equals("MSG"))
+                    {
+                        if (messageParts.Length >= 3)
+                        {
+                            // from server: MSG|senderName|msgBody
+                            string senderName = messageParts[1];
+                            string msgBody = messageParts[2];
+
+                            if (senderName.Equals(userId))
+                            {
+                                txtLogBox.Text += "Own message received from server\n";
+                            }
+                            else
+                            {
+                                txtReceived.Text += senderName + ": " + msgBody + "\n";
+                                txtLogBox.Text += "Message received from server\n";
+
+                                // send ACK back to server: ACK|receiverId|senderId|message
+                                if (senderWriter != null)
+                                {
+                                    string ackMessage =
+                                        "ACK|" + userId + "|" + senderName + "|" + msgBody;
+                                    senderWriter.WriteLine(ackMessage);
+                                }
+                            }
+                        }
+                    }
+                    else if (messageType.Equals("ACK"))
+                    {
+                        txtLogBox.Text += "ACK received\n";
+                    }
+                    else if (messageType.Equals(userId))
                     {
                         //do nothing
                         txtLogBox.Text += "Own message received from server\n";
                     }
-                    //write the message
-                    else
+                    //write the message (fallback old format)
+                    else if (messageParts.Length >= 2)
                     {
-                        txtReceived.Text += message + "\n";
+                        string name = messageParts[0];
+                        string message = messageParts[1];
+                        txtReceived.Text += name + ": " + message + "\n";
                         txtLogBox.Text += "Message received from server\n";
                     }
                 }
             }
         }
+
 
 
         /// <summary>
