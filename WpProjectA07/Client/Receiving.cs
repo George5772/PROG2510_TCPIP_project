@@ -24,7 +24,9 @@ namespace Client
 
         public static void ReceiveMessages(object? client)
 		{
-			try
+			// make sure this clean before
+            exception = false;
+            try
 			{
 				TcpClient? tcpClient = (TcpClient?)client;
 				if (tcpClient == null)

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{0AE96DD4-F1E7-44B4-B2F5-B6BE3A4A88A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerAsAProcess", "ServerAsAProcess\ServerAsAProcess.csproj", "{D73079F8-FC51-4F7D-A087-A0E5386CAB64}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageServerAsService", "MessageServerAsService\MessageServerAsService.csproj", "{37C2DD63-DD12-4E08-948E-F84793A87F5C}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{0AE96DD4-F1E7-44B4-B2F5-B6BE3A4A88A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AE96DD4-F1E7-44B4-B2F5-B6BE3A4A88A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AE96DD4-F1E7-44B4-B2F5-B6BE3A4A88A4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D73079F8-FC51-4F7D-A087-A0E5386CAB64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D73079F8-FC51-4F7D-A087-A0E5386CAB64}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D73079F8-FC51-4F7D-A087-A0E5386CAB64}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D73079F8-FC51-4F7D-A087-A0E5386CAB64}.Release|Any CPU.Build.0 = Release|Any CPU
 		{37C2DD63-DD12-4E08-948E-F84793A87F5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{37C2DD63-DD12-4E08-948E-F84793A87F5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37C2DD63-DD12-4E08-948E-F84793A87F5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
