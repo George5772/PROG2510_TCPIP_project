@@ -66,10 +66,13 @@ namespace MessageServerAsService
         }
         public void ServerPause()
         {
+
             OkayToContinue.Reset();
+            
         }
         public void ServerContinue()
         {
+ 
             OkayToContinue.Set();
         }
         public static void sendStop()

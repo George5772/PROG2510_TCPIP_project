@@ -30,7 +30,7 @@ namespace Client
 
 
 
-
+  
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -41,6 +41,7 @@ namespace Client
         private TcpClient? receiverClient;
         private StreamWriter? senderWriter;
         private StreamReader? senderReader;
+        private bool isConnected = false;
 
         public static volatile string userId = new Random(DateTime.Now.Millisecond * DateTime.Now.Second).NextInt64().ToString();
 
@@ -108,6 +109,8 @@ namespace Client
                 {
                     senderWriter.Close();
                 }
+                isConnected = false;             
+                btnConnectToServer.IsEnabled = true;
             }
             catch (Exception ex)
             {
@@ -271,7 +274,13 @@ namespace Client
         /// <param name="e"></param>
         private void btnConnectToServer_Click(object sender, RoutedEventArgs e)
         {
-            if(!(ipAddressTxtBox.Text == string.Empty || nameTxtBox.Text == string.Empty || porTxtBox.Text == string.Empty))
+            if (isConnected)
+            {
+                txtLogBox.AppendText("Already connected.\n");
+                return;
+            }
+
+            if (!(ipAddressTxtBox.Text == string.Empty || nameTxtBox.Text == string.Empty || porTxtBox.Text == string.Empty))
             {
                 try
                 {
@@ -290,6 +299,9 @@ namespace Client
 
                     txtUserInput.IsEnabled = true;
                     btnSendInput.IsEnabled = true;
+
+                    btnConnectToServer.IsEnabled = false;
+                    isConnected = true;
                 }
                 catch (Exception ex)
                 {
