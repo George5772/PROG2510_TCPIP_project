@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+* FILE : MessageServerService.cs
+* PROJECT : PROG2510 A06
+* PROGRAMMER : George Shapka, Le Hai Quy Bui
+* FIRST VERSION : 11/11/2025 11:34:00 PM
+*/
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
