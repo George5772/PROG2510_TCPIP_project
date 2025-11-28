@@ -53,7 +53,9 @@ namespace MessageServerAsService
             tr.Start();
 
         }
-
+        /// <summary>
+        /// Stop the server
+        /// </summary>
         public void ServerStop()
         {
             sendStop();
@@ -64,17 +66,26 @@ namespace MessageServerAsService
                 tr.Join();
             }
         }
+        /// <summary>
+        /// Pause the server
+        /// </summary>
         public void ServerPause()
         {
 
             OkayToContinue.Reset();
             
         }
+        /// <summary>
+        /// Continue the server
+        /// </summary>
         public void ServerContinue()
         {
  
             OkayToContinue.Set();
         }
+        /// <summary>
+        /// Send stop to client
+        /// </summary>
         public static void sendStop()
         {
             TcpClient senderClient = new TcpClient(localAddr.ToString(), port);

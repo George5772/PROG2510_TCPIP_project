@@ -154,5 +154,5 @@ namespace MessageServerAsService
             }
             return;
         }//end of method
-    }//end of WorkerSen
+    }//end of WorkerSender
 }

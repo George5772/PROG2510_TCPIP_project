@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+* FILE : About.xaml.cs
+* PROJECT : PROG2510 - A07
+* PROGRAMMER : George Shapka, Le Hai Quy Bui
+* FIRST VERSION : 11/14/2025
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
