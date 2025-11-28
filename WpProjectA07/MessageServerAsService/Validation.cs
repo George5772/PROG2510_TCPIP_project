@@ -5,6 +5,11 @@ namespace MessageServerAsService
 {
     public static class Validation
     {
+        /// <summary>
+        /// This method for validateIPFormat
+        /// </summary>
+        /// <param name="ipAddress"></param>
+        /// <returns></returns>
         public static IPAddress validateIPFormat(string ipAddress)
         {
             IPAddress res;
@@ -16,7 +21,11 @@ namespace MessageServerAsService
             }
             return res;
         }
-
+        /// <summary>
+        /// This method for validate port number
+        /// </summary>
+        /// <param name="portNumber"></param>
+        /// <returns></returns>
         public static int validatePort(string portNumber)
         {
             int result;

@@ -64,19 +64,18 @@ namespace MessageServerAsService
                             //get mutex to access list
                             mut.WaitOne();
 
-                            // MSG|senderId|text
-                            if (type.Equals("MSG") && parts.Length >= 3)
+                            // MSG|senderId|msgBody|senderName
+                            if (type.Equals("MSG") && parts.Length >= 4)
                             {
                                 string senderId = parts[1];
                                 string msgBody = parts[2];
                                 string senderName = parts[3];
 
-                                // 1. ACK back to sender
-                                string ackToSender =
-                                    "ACK|SERVER|" + senderId + "|" + msgBody;
+                                // ACK back to sender 
+                                string ackToSender = "ACK|SERVER|" + senderId + "|" + msgBody;
                                 sendMessageToClient(client, ackToSender);
 
-                                // 2. broadcast to all receivers
+                                // broadcast message to all receiver clients
                                 int i = 0;
                                 while (i < RunServer.Clients.Count)
                                 {
@@ -84,48 +83,37 @@ namespace MessageServerAsService
 
                                     if (clientReceiver.Connected)
                                     {
-                                        string messageToReceiver =
-                                            "MSG|" + senderId + "|" + msgBody + "|" + senderName;
+                                        string messageToReceiver = "MSG|" + senderId + "|" + msgBody + "|" + senderName;
                                         sendMessageToClient(clientReceiver, messageToReceiver);
                                     }
 
                                     i++;
                                 }
                             }
-                            // ACK|receiverId|senderId|text
-                            else if (type.Equals("ACK") && parts.Length >= 4)
+                            // ACK|receiverId|msgBody  
+                            else if (type.Equals("ACK") && parts.Length >= 3)
                             {
                                 string receiverId = parts[1];
-                                string senderId = parts[2];
-                                string msgBody = parts[3];
+                                string msgBody = parts[2];
 
-                                string logLine =
-                                    "ACK from " + receiverId +
-                                    " to " + senderId +
-                                    " : " + msgBody;
-                                Logger.LogDataToFile(
-                                    RunServer.LogFilePath,
-                                    LoggerActions.Message,
-                                    logLine);
+                                string logLine = "ACK from " + receiverId + " : " + msgBody;
+                                Logger.LogDataToFile(RunServer.LogFilePath, LoggerActions.Message, logLine);
 
-                                // forward ACK to original sender's receiver
-                                int j = 0;
-                                bool found = false;
-                                while (j < RunServer.ClientUserIds.Count && !found)
+                                // broadcast ACK to all receiver clients
+                                int i = 0;
+                                while (i < RunServer.Clients.Count)
                                 {
-                                    if (RunServer.ClientUserIds[j] == senderId)
+                                    TcpClient clientReceiver = RunServer.Clients[i];
+
+                                    if (clientReceiver.Connected)
                                     {
-                                        TcpClient senderReceiver = RunServer.Clients[j];
-                                        string ackForward =
-                                            "ACK|" + receiverId + "|" + senderId + "|" + msgBody;
-                                        sendMessageToClient(senderReceiver, ackForward);
-                                        found = true;
+                                        string ackBroadcast = "ACK|" + receiverId + "|" + msgBody;
+                                        sendMessageToClient(clientReceiver, ackBroadcast);
                                     }
-                                    j++;
+
+                                    i++;
                                 }
                             }
-
-
                             mut.ReleaseMutex();
 
                         }

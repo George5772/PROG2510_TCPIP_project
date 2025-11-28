@@ -27,7 +27,6 @@ namespace MessageServerAsService
         //contains tcpClients for receiver clients
         public static ManualResetEvent OkayToContinue = new ManualResetEvent(true);
         public static List<TcpClient> Clients = new List<TcpClient>();
-        public static List<string> ClientUserIds = new List<string>();
         public static string LogFilePath = ConfigurationManager.AppSettings["loggerFilePath"];
 
         static string ipAddress = ConfigurationManager.AppSettings["ipAddress"];

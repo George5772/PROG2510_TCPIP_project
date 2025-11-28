@@ -98,7 +98,6 @@ namespace MessageServerAsService
                                     //add a client to the receiving client list
                                     clientMut.WaitOne();
                                     RunServer.Clients.Add(client);
-                                    RunServer.ClientUserIds.Add(userId);
                                     clientMut.ReleaseMutex();
                                 }
                                 else if (type.Equals("Sender"))
