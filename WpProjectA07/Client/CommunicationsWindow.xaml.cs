@@ -211,6 +211,20 @@ namespace Client
                             //disable user sending stuff
                             txtUserInput.IsEnabled = false;
                             btnSendInput.IsEnabled = false;
+
+                            // close connections
+                            senderClient?.Close();
+                            receiverClient?.Close();
+                            senderWriter?.Close();
+                            senderReader?.Close();
+
+                            senderClient = null;
+                            receiverClient = null;
+                            senderWriter = null;
+                            senderReader = null;
+
+                            isConnected = false;
+                            btnConnectToServer.IsEnabled = true;
                         }
                     }
                     else if (messageType.Equals("MSG"))
@@ -282,6 +296,7 @@ namespace Client
 
             if (!(ipAddressTxtBox.Text == string.Empty || nameTxtBox.Text == string.Empty || porTxtBox.Text == string.Empty))
             {
+                
                 try
                 {
                     receiverClient = new TcpClient(ipAddressTxtBox.Text, Validation.validatePort(porTxtBox.Text));
@@ -307,6 +322,10 @@ namespace Client
                 {
                     txtLogBox.AppendText("ERROR: " + ex.Message);
                 }
+            }
+            else
+            {
+                MessageBox.Show("None of these three field allow empty!", "Warning");
             }
             
         }//end of method
